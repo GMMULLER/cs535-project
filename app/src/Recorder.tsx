@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import { AudioRecorder } from 'react-audio-voice-recorder';
+import './Recorder.css'
 
 function Recorder() {
 
@@ -91,10 +92,10 @@ function Recorder() {
                 <input type="text" id="participantInput" name="participant"/>
                 <button id={"saveParticipant"}>Save</button>
             </div> : <div>
-                <h2 style={{textAlign: "center"}}>{participant}</h2>
-                <p style={{fontWeight: "bold"}}>{tasksPrompts[currentTaskNumberRef.current]}</p>
-                <p>Feel free to record a task as many times as you wish. Use the box editor to tweak the text to make the transcription as close to your intended message as possible.</p>
-                <p>While it is possible to skip a task we encourage you to do so only after getting stuck with unsuccessful attempts</p>
+                <h2 style={{textAlign: "center"}}>ID: {participant}</h2>
+                <p style={{fontSize: "2em"}}>{tasksPrompts[currentTaskNumberRef.current]}.</p>
+                <p style={{color: "#999999"}}>Feel free to record and listen to your answer as many times as you wish. Use the box editor to tweak the text to make the transcription as close to your intended message as possible.</p>
+                <p style={{color: "#999999"}}>While it is possible to skip a task we encourage you to do so only after getting stuck with unsuccessful attempts.</p>
                 <AudioRecorder 
                     onRecordingComplete={addAudioElement}
                     audioTrackConstraints={{
@@ -103,14 +104,16 @@ function Recorder() {
                     }} 
                     downloadOnSavePress={false}
                     showVisualizer={true}
+                    classes={{AudioRecorderClass: "recorderContainer"}}
                 />
                 <div id={"audioResult"}></div>
                 <div>
-                    <input type="text" value={currentTaskContent} onChange={updateTaskContent}/>
+                    {/* <input type="text" value={currentTaskContent} onChange={updateTaskContent}/> */}
+                    <textarea value={currentTaskContent} rows={4} cols={50} onChange={updateTaskContent} style={{width: "100%", height: "200px", marginBottom: "10px"}}></textarea>
                 </div>
-                <button id={"submitButton"}>Submit</button>
-                <button>Skip</button>
-                <div>
+                <button id={"submitButton"} style={{marginRight: "5px"}}>Submit</button>
+                <button style={{backgroundColor: "#de0202"}}>Skip</button>
+                <div style={{marginTop: "10px", fontWeight: "bold"}}>
                     <span>Task: {currentTaskNumberRef.current+1}/{tasksPrompts.length}</span>
                 </div>
             </div>}
