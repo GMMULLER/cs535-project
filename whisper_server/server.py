@@ -25,7 +25,7 @@ def root():
 def transcribe_audio():
 
     model = whisper.load_model("base")
-    result = model.transcribe("audio.mp3")
+    result = model.transcribe("audio.webm")
 
     return result["text"]
 
@@ -33,10 +33,16 @@ def transcribe_audio():
 def upload_audio():
     if 'audio' not in request.files:
         return 'No file part'
-    audio_file = request.files['audio']
-    audio_file.seek(0)
-    audio_file.save('audio.mp3')
-    return 'Audio uploaded successfully'
+
+    filename = request.args.get('filename')
+
+    if(filename == None):
+        abort(400)
+    else:
+        audio_file = request.files['audio']
+        audio_file.seek(0)
+        audio_file.save(filename+'.webm')
+        return 'Audio uploaded successfully'
 
 if __name__ == '__main__':
     app.run(host=address, port=port)
