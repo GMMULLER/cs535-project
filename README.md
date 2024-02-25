@@ -1,12 +1,16 @@
-python: 3.10.6
+python: 3.10.6 (Anaconda environment recommended) and Google Chrome
 
-cd app
-npm install
-npm run start
-cd ..
-cd whisper_server
-pip install -r requirements.txt
-python server.py
+cd app  
+npm install  
+npm run start  
+cd ..  
+cd whisper_server  
+pip install -r requirements.txt  
+python server.py  
+
+### Database
+
+It uses sqlite. The database can be deleted and recreated through the `create_database.py` script.
 
 ### whisper
 
