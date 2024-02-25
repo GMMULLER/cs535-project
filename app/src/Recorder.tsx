@@ -7,6 +7,7 @@ function Recorder() {
     const [recordingCounter, setRecordingCounter] = useState<number>(0);
     const [participant, setParticipant] = useState<string>("");
     const [currentTaskNumber, _setCurrentTaskNumber] = useState<number>(0);
+    const [currentTaskContent, setCurrentTaskContent] = useState<string>("");
 
 	const currentTaskNumberRef = useRef(currentTaskNumber);
 	const setCurrentTaskNumber = (data: number) => {
@@ -14,12 +15,17 @@ function Recorder() {
 	    _setCurrentTaskNumber(data);
 	};
 
-
     const tasksPrompts = [
         "Record a message as if you were inviting a friend to hang out with you in your place tomorrow",
         "Record a message as if you were emailing your boss to ask if there is a meeting happening today",
         "Record a massage as if you were wishing happy birthday to your best friend"
     ]
+
+    const resolveTranscript = async (promise: Promise<any>) => {
+        promise.then((obj: any) => {
+            setCurrentTaskContent(obj.content);
+        });
+    }
 
     const addAudioElement = (blob: any) => {
 
@@ -31,8 +37,7 @@ function Recorder() {
             body: formData
         })
             .then(response => {
-                // Handle response
-                console.log('Audio uploaded successfully');
+                resolveTranscript(response.json());
             })
             .catch(error => {
                 // Handle error
@@ -52,22 +57,41 @@ function Recorder() {
 
     useEffect(() => {
 
-        let submitButton = document.getElementById("submitButton") as HTMLElement;
+        if(participant != ""){
+            let submitButton = document.getElementById("submitButton") as HTMLElement;
+    
+            submitButton.addEventListener("click", function() {
+                // TODO: log info
+                if(currentTaskNumberRef.current < tasksPrompts.length-1){
+                    setCurrentTaskNumber(currentTaskNumberRef.current+1);
+                }
+            });
+        }
 
-        submitButton.addEventListener("click", function() {
-            // log info
-            if(currentTaskNumberRef.current < tasksPrompts.length-1){
-                setCurrentTaskNumber(currentTaskNumberRef.current+1);
-            }
+    }, [participant]);
+
+    useEffect(() => {
+        let saveParticipant = document.getElementById("saveParticipant") as HTMLElement;
+    
+        saveParticipant.addEventListener("click", function() {
+            // TODO: save log info
+            let participantInput = document.getElementById("participantInput") as HTMLInputElement;
+            setParticipant(participantInput.value);
         });
     }, []);
 
+    const updateTaskContent = (event: any) => {
+        setCurrentTaskContent(event.target.value);
+    }
 
     return (
         <>
             {participant == "" ? <div>
-                <input type="text" id="participantInput" />
+                <label htmlFor="participant" style={{marginRight: "10px"}}>Participant ID:</label>
+                <input type="text" id="participantInput" name="participant"/>
+                <button id={"saveParticipant"}>Save</button>
             </div> : <div>
+                <h2 style={{textAlign: "center"}}>{participant}</h2>
                 <p style={{fontWeight: "bold"}}>{tasksPrompts[currentTaskNumberRef.current]}</p>
                 <p>Feel free to record a task as many times as you wish. Use the box editor to tweak the text to make the transcription as close to your intended message as possible.</p>
                 <p>While it is possible to skip a task we encourage you to do so only after getting stuck with unsuccessful attempts</p>
@@ -81,6 +105,9 @@ function Recorder() {
                     showVisualizer={true}
                 />
                 <div id={"audioResult"}></div>
+                <div>
+                    <input type="text" value={currentTaskContent} onChange={updateTaskContent}/>
+                </div>
                 <button id={"submitButton"}>Submit</button>
                 <button>Skip</button>
                 <div>

@@ -21,14 +21,6 @@ def add_cors_headers(response):
 def root():
     abort(403)
 
-@app.route('/transcribeAudio', methods=['GET'])
-def transcribe_audio():
-
-    model = whisper.load_model("base")
-    result = model.transcribe("audio.webm")
-
-    return result["text"]
-
 @app.route('/uploadAudio', methods=['POST'])
 def upload_audio():
     if 'audio' not in request.files:
@@ -42,7 +34,11 @@ def upload_audio():
         audio_file = request.files['audio']
         audio_file.seek(0)
         audio_file.save(filename+'.webm')
-        return 'Audio uploaded successfully'
+
+        model = whisper.load_model("base")
+        result = model.transcribe(filename+'.webm')
+
+        return jsonify({'content': str(result["text"])})
 
 if __name__ == '__main__':
     app.run(host=address, port=port)
