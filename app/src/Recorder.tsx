@@ -12,17 +12,24 @@ function Recorder() {
     const [currentTaskContent, setCurrentTaskContent] = useState<string>("");
     const [lastRecording, setLastRecording] = useState<string>("");
     const [taskStartTimestamp, setTaskStartTimestamp] = useState<Date>(new Date());
-    
-	const currentTaskNumberRef = useRef(currentTaskNumber);
-	const setCurrentTaskNumber = (data: number) => {
-	    currentTaskNumberRef.current = data;
-	    _setCurrentTaskNumber(data);
-	};
+
+    const currentTaskNumberRef = useRef(currentTaskNumber);
+    const setCurrentTaskNumber = (data: number) => {
+        currentTaskNumberRef.current = data;
+        _setCurrentTaskNumber(data);
+    };
 
     const tasksPrompts = [
-        "Record a message as if you were inviting a friend to hang out with you in your place tomorrow",
-        "Record a message as if you were emailing your boss to ask if there is a meeting happening today",
-        "Record a massage as if you were wishing happy birthday to your best friend"
+        "Record a message as if you were writing a message to your friend to invite them to hang out together this weekend",
+        "Record a message as if you were emailing your boss to ask to ask whether there will be a meeting today",
+        "Record a massage as if you were wishing happy birthday to your best friend, highlighting your wishes for them for the upcoming year",
+        "Record a massage as if you were writing a message to your professor to extend the deadline for an assignment you’ve been working on",
+        "Record a massage as if you were writing a friendly letter to a family member you haven't seen in a while. Share updates about your life and ask about theirs",
+        "Record a massage as if you were providing a voice-to-text review for a product you recently purchased online. Share your thoughts on its features, performance, and overall satisfaction",
+        "Record a massage as if you were writing a thank-you note to a colleague who has provided valuable assistance on a recent task. Express gratitude professionally and acknowledge their contributions",
+        "Record a massage as if you were writing a short blog post on a topic of your choice. It could be a personal experience, hobby, or any subject that interests you",
+        "Record a massage for your significant other to remind them about an upcoming anniversary dinner reservation",
+        "Record a massage for your landlord to report a maintenance issue in your apartment",
     ]
 
     const resolveTranscript = async (promise: Promise<any>) => {
@@ -37,7 +44,7 @@ function Recorder() {
         const formData = new FormData();
         formData.append('audio', blob);
 
-        fetch('http://localhost:5001/uploadAudio?filename=audio'+recordingCounter, {
+        fetch('http://localhost:5001/uploadAudio?filename=audio' + recordingCounter, {
             method: 'POST',
             body: formData
         })
@@ -57,8 +64,8 @@ function Recorder() {
         resultDiv.innerHTML = "";
         resultDiv.appendChild(audio);
 
-        setRecordingCounter(recordingCounter+1);
-        setRecordedCounter(recordedCounter+1);
+        setRecordingCounter(recordingCounter + 1);
+        setRecordedCounter(recordedCounter + 1);
     };
 
     useEffect(() => {
@@ -67,8 +74,8 @@ function Recorder() {
 
     useEffect(() => {
         let saveParticipant = document.getElementById("saveParticipant") as HTMLElement;
-    
-        saveParticipant.addEventListener("click", function() {
+
+        saveParticipant.addEventListener("click", function () {
             let participantInput = document.getElementById("participantInput") as HTMLInputElement;
             setParticipant(participantInput.value);
 
@@ -77,7 +84,7 @@ function Recorder() {
             let day = date.getDate();
             let month = date.getMonth() + 1;
             let year = date.getFullYear();
-            
+
             // This arrangement can be altered based on how we want the date's format to appear.
             let currentDate = `${day}-${month}-${year}`;
             let proficiencyLevel = document.getElementById("englishProficiency") as HTMLInputElement;
@@ -126,28 +133,28 @@ function Recorder() {
         }
 
         fetch('http://localhost:5001/submitAnswer', {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                }
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            }
+        })
+            .then(response => {
             })
-                .then(response => {
-                })
-                .catch(error => {
-                });
+            .catch(error => {
+            });
 
-        setCurrentTaskNumber(currentTaskNumberRef.current+1);
+        setCurrentTaskNumber(currentTaskNumberRef.current + 1);
         setCurrentTaskContent("");
         setLastRecording("");
         setRecordedCounter(0);
-    
+
         setTaskStartTimestamp(new Date());
     }
 
     const skipTask = () => {
         // TODO: log info
-        setCurrentTaskNumber(currentTaskNumberRef.current+1);
+        setCurrentTaskNumber(currentTaskNumberRef.current + 1);
         setCurrentTaskContent("");
         setLastRecording("");
         setRecordedCounter(0);
@@ -158,11 +165,11 @@ function Recorder() {
     return (
         <>
             {participant == "" ? <div>
-                <label htmlFor="participant" style={{marginRight: "10px"}}>Participant ID:</label>
-                <input type="text" id="participantInput" name="participant"/>
+                <label htmlFor="participant" style={{ marginRight: "10px" }}>Participant ID:</label>
+                <input type="text" id="participantInput" name="participant" />
                 <br />
                 <br />
-                <label htmlFor="englishProficiency" style={{marginRight: "10px"}}>English proficiency:</label>
+                <label htmlFor="englishProficiency" style={{ marginRight: "10px" }}>English proficiency:</label>
                 <select name="englishProficiency" id="englishProficiency">
                     <option value="basic">Basic</option>
                     <option value="intermediate">Intermediate</option>
@@ -170,36 +177,36 @@ function Recorder() {
                 </select>
                 <br />
                 <br />
-                <label htmlFor="nativeLanguage" style={{marginRight: "10px"}}>Native Language:</label>
-                <input type="text" id="nativeLanguage" name="nativeLanguage"/>
+                <label htmlFor="nativeLanguage" style={{ marginRight: "10px" }}>Native Language:</label>
+                <input type="text" id="nativeLanguage" name="nativeLanguage" />
                 <br />
                 <button id={"saveParticipant"}>Save</button>
             </div> : currentTaskNumberRef.current < tasksPrompts.length ? <div>
-                <h2 style={{textAlign: "center"}}>ID: {participant}</h2>
-                <p style={{fontSize: "2em"}}>{tasksPrompts[currentTaskNumberRef.current]}.</p>
-                <p style={{color: "#999999"}}>Feel free to record and listen to your answer as many times as you wish. If you want you can use the box editor to tweak the text to fix mistakes.</p>
-                <p style={{color: "#999999"}}>While it is possible to skip a task we encourage you to do so only after getting stuck with unsuccessful attempts.</p>
-                <AudioRecorder 
+                <h2 style={{ textAlign: "center" }}>ID: {participant}</h2>
+                <p style={{ fontSize: "2em" }}>{tasksPrompts[currentTaskNumberRef.current]}.</p>
+                <p style={{ color: "#999999" }}>Feel free to record and listen to your answer as many times as you wish. If you want you can use the box editor to tweak the text to fix mistakes.</p>
+                <p style={{ color: "#999999" }}>While it is possible to skip a task we encourage you to do so only after getting stuck with unsuccessful attempts.</p>
+                <AudioRecorder
                     onRecordingComplete={addAudioElement}
                     audioTrackConstraints={{
                         noiseSuppression: true,
                         echoCancellation: true,
-                    }} 
+                    }}
                     downloadOnSavePress={false}
                     showVisualizer={true}
-                    classes={{AudioRecorderClass: "recorderContainer"}}
+                    classes={{ AudioRecorderClass: "recorderContainer" }}
                 />
                 <div id={"audioResult"}></div>
                 <div>
                     {/* <input type="text" value={currentTaskContent} onChange={updateTaskContent}/> */}
-                    <textarea value={currentTaskContent} rows={4} cols={50} onChange={updateTaskContent} style={{width: "100%", height: "200px", marginBottom: "10px", resize: "none"}}></textarea>
+                    <textarea value={currentTaskContent} rows={4} cols={50} onChange={updateTaskContent} style={{ width: "100%", height: "200px", marginBottom: "10px", resize: "none" }}></textarea>
                 </div>
-                <button id={"submitButton"} style={{marginRight: "5px"}} onClick={submitTask}>Submit</button>
-                <button style={{backgroundColor: "#de0202"}} onClick={skipTask}>Skip</button>
-                <div style={{marginTop: "10px", fontWeight: "bold"}}>
-                    <span>Task: {currentTaskNumberRef.current+1}/{tasksPrompts.length}</span>
+                <button id={"submitButton"} style={{ marginRight: "5px" }} onClick={submitTask}>Submit</button>
+                <button style={{ backgroundColor: "#de0202" }} onClick={skipTask}>Skip</button>
+                <div style={{ marginTop: "10px", fontWeight: "bold" }}>
+                    <span>Task: {currentTaskNumberRef.current + 1}/{tasksPrompts.length}</span>
                 </div>
-            </div> : <p style={{color: "green", fontSize: "2em"}}>All tasks completed. Thank you!</p>}
+            </div> : <p style={{ color: "green", fontSize: "2em" }}>All tasks completed. Thank you!</p>}
 
         </>
     );
