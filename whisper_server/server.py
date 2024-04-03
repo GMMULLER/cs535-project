@@ -37,7 +37,7 @@ def upload_audio():
         audio_file.seek(0)
         audio_file.save(filename+'.webm')
 
-        model = whisper.load_model("medium.en")
+        model = whisper.load_model("base")
         result = model.transcribe(filename+'.webm')
 
         return jsonify({'content': str(result["text"])})
