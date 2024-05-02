@@ -16,9 +16,13 @@ cur.execute('''CREATE TABLE IF NOT EXISTS task (
                prompt TEXT)''')
 
 tasksPrompts = [
-    'Record a message as if you were inviting a friend to hang out with you in your place tomorrow',
-    'Record a message as if you were emailing your boss to ask if there is a meeting happening today',
-    'Record a massage as if you were wishing happy birthday to your best friend'
+    "Test 1",
+    "Test 2",
+    "Record a message to your friend to invite them to hang out together this weekend",
+    "Record a birthday message to your best friend, highlighting your wishes for them for the upcoming year",
+    "Record a message to your professor to extend the deadline for an assignment you’ve been working on",
+    "Record a message for your significant other to remind them about an upcoming anniversary dinner reservation",
+    "Record a message for your landlord to report a maintenance issue in your apartment"
 ]
 
 for prompt in tasksPrompts:
